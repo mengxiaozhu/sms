@@ -25,7 +25,7 @@ var (
 type SafeClient struct {
 	Redis           *redis.Client `sm:"(.redis)"`
 	Prefix          string        `sm:"(.prefix)"`
-	AccessKeyID     string        `sm:"#.(.ali).key"`
+	AccessKeyID     string        `sm:"#.(.ali).id"`
 	AccessKeySecret string        `sm:"#.(.ali).secret"`
 	SignName        string        `sm:"#.(.opts).SignName"`
 	TemplateCode    string        `sm:"#.(.opts).TemplateCode"`
