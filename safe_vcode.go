@@ -25,13 +25,13 @@ var (
 type SafeClient struct {
 	Redis           *redis.Client `sm:"(.redis)"`
 	Prefix          string        `sm:"(.prefix)"`
-	AccessKeyID     string        `sm:"#.(.ali).id"`
-	AccessKeySecret string        `sm:"#.(.ali).secret"`
-	SignName        string        `sm:"#.(.opts).SignName"`
-	TemplateCode    string        `sm:"#.(.opts).TemplateCode"`
-	TemplateParam   string        `sm:"#.(.opts).TemplateParam"`
-	SmsUpExtendCode string        `sm:"#.(.opts).SmsUpExtendCode"`
-	OutId           string        `sm:"#.(.opts).OutId"`
+	AccessKeyID     string        `sm:"(.ali).id"`
+	AccessKeySecret string        `sm:"(.ali).secret"`
+	SignName        string        `sm:"(.opts).SignName"`
+	TemplateCode    string        `sm:"(.opts).TemplateCode"`
+	TemplateParam   string        `sm:"(.opts).TemplateParam"`
+	SmsUpExtendCode string        `sm:"(.opts).SmsUpExtendCode"`
+	OutId           string        `sm:"(.opts).OutId"`
 	dySmsClient     *aliSMS.DYSmsClient
 	r               *rand.Rand
 }
