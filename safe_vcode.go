@@ -1,12 +1,13 @@
 package sms
 
-import "gopkg.in/redis.v4"
+import aliSMS "github.com/denverdino/aliyungo/sms"
 import (
 	"crypto/sha1"
 	"encoding/hex"
 	"errors"
 	"fmt"
-	aliSMS "github.com/denverdino/aliyungo/sms"
+	"github.com/cocotyty/summer"
+	"gopkg.in/redis.v4"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -23,15 +24,16 @@ var (
 )
 
 type SafeClient struct {
-	Redis           *redis.Client `sm:"(.redis)"`
-	Prefix          string        `sm:"(.prefix)"`
-	AccessKeyID     string        `sm:"(.ali).id"`
-	AccessKeySecret string        `sm:"(.ali).secret"`
-	SignName        string        `sm:"(.opts).SignName"`
-	TemplateCode    string        `sm:"(.opts).TemplateCode"`
-	TemplateParam   string        `sm:"(.opts).TemplateParam"`
-	SmsUpExtendCode string        `sm:"(.opts).SmsUpExtendCode"`
-	OutId           string        `sm:"(.opts).OutId"`
+	Log             *summer.SimpleLog `sm:"(.log)"`
+	Redis           *redis.Client     `sm:"(.redis)"`
+	Prefix          string            `sm:"(.prefix)"`
+	AccessKeyID     string            `sm:"(.ali).id"`
+	AccessKeySecret string            `sm:"(.ali).secret"`
+	SignName        string            `sm:"(.opts).SignName"`
+	TemplateCode    string            `sm:"(.opts).TemplateCode"`
+	TemplateParam   string            `sm:"(.opts).TemplateParam"`
+	SmsUpExtendCode string            `sm:"(.opts).SmsUpExtendCode"`
+	OutId           string            `sm:"(.opts).OutId"`
 	dySmsClient     *aliSMS.DYSmsClient
 	r               *rand.Rand
 }
@@ -39,6 +41,9 @@ type SafeClient struct {
 func (c *SafeClient) Ready() {
 	c.dySmsClient = aliSMS.NewDYSmsClient(c.AccessKeyID, c.AccessKeySecret)
 	c.r = rand.New(rand.NewSource(time.Now().UnixNano()))
+	if c.Log == nil {
+		c.Log = summer.NewSimpleLog("SafeVCodeClient", summer.InfoLevel)
+	}
 }
 
 // 增加一个签名，限定了改签名的调用次数及重置时间
