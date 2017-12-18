@@ -41,7 +41,7 @@ type SafeClient struct {
 
 func (c *SafeClient) Ready() {
 	c.dySmsClient = aliSMS.NewDYSmsClient(c.AccessKeyID, c.AccessKeySecret)
-	c.r = rand.New(rand.NewSource(time.Now().UnixNano()))
+	//c.r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	if c.Log == nil {
 		c.Log = summer.NewSimpleLog("SafeVCodeClient", summer.InfoLevel)
 	}
@@ -87,7 +87,7 @@ func (c *SafeClient) dec(sign string) (success bool, err error) {
 }
 
 func (c *SafeClient) vCode(length int) string {
-	i := c.r.Int()
+	i := rand.Int()
 	return fmt.Sprintf("%0"+strconv.Itoa(length)+"."+strconv.Itoa(length)+"s", strconv.Itoa(i))
 }
 
