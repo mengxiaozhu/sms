@@ -36,6 +36,7 @@ type SafeClient struct {
 	OutId           string            `sm:"(.opts).OutId"`
 	dySmsClient     *aliSMS.DYSmsClient
 	r               *rand.Rand
+	moduleName string
 }
 
 func (c *SafeClient) Ready() {
@@ -91,6 +92,9 @@ func (c *SafeClient) vCode(length int) string {
 }
 
 func (c *SafeClient) SendVCode(tel string, length int, ttl time.Duration, sign string) (vCode string, err error) {
+	defer func(){
+		c.Log.Info("moduleName:%s tel:%s vCode:%s\n", c.moduleName, tel, vCode)
+	}()
 	ok, err := c.dec(sign)
 	if err != nil {
 		return
@@ -121,10 +125,14 @@ func (c *SafeClient) SendVCode(tel string, length int, ttl time.Duration, sign s
 		err = errors.New(resp.RequestId + ";" + resp.Code + ";" + resp.Message + ";" + resp.BizId)
 		return
 	}
-	return v, err
+	vCode = v
+	return vCode, err
 }
-
 func (c *SafeClient) VerifyVCode(tel string, vCode string, sign string) (success bool, err error) {
+	defer func(){
+		c.Log.Info("moduleName:%s tel:%s vCode:%s\n", c.moduleName, tel, vCode)
+
+	}()
 	ok, err := c.dec(sign)
 	if err != nil {
 		return false, err
@@ -137,6 +145,13 @@ func (c *SafeClient) VerifyVCode(tel string, vCode string, sign string) (success
 	if err != nil {
 		return false, err
 	}
-	c.Redis.Del(k)
-	return r == vCode, nil
+	if r == vCode {
+		success = true
+		c.Redis.Del(k)
+	}
+	return success, nil
+}
+
+func (c *SafeClient) SetModuleName(name string){
+	c.moduleName = name
 }
