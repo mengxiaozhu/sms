@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/cocotyty/summer"
 	"gopkg.in/redis.v4"
 	"math/rand"
 	"strconv"
@@ -24,7 +23,6 @@ var (
 )
 
 type SafeClient struct {
-	Log             *summer.SimpleLog `sm:"(.log)"`
 	Redis           *redis.Client     `sm:"(.redis)"`
 	Prefix          string            `sm:"(.prefix)"`
 	AccessKeyID     string            `sm:"(.ali).id"`
@@ -42,9 +40,6 @@ type SafeClient struct {
 func (c *SafeClient) Ready() {
 	c.dySmsClient = aliSMS.NewDYSmsClient(c.AccessKeyID, c.AccessKeySecret)
 	//c.r = rand.New(rand.NewSource(time.Now().UnixNano()))
-	if c.Log == nil {
-		c.Log = summer.NewSimpleLog("SafeVCodeClient", summer.InfoLevel)
-	}
 }
 
 // 增加一个签名，限定了改签名的调用次数及重置时间
@@ -92,9 +87,6 @@ func (c *SafeClient) vCode(length int) string {
 }
 
 func (c *SafeClient) SendVCode(tel string, length int, ttl time.Duration, sign string) (vCode string, err error) {
-	defer func(){
-		c.Log.Info("moduleName:%s tel:%s vCode:%s\n", c.moduleName, tel, vCode)
-	}()
 	ok, err := c.dec(sign)
 	if err != nil {
 		return
@@ -129,10 +121,6 @@ func (c *SafeClient) SendVCode(tel string, length int, ttl time.Duration, sign s
 	return vCode, err
 }
 func (c *SafeClient) VerifyVCode(tel string, vCode string, sign string) (success bool, err error) {
-	defer func(){
-		c.Log.Info("moduleName:%s tel:%s vCode:%s\n", c.moduleName, tel, vCode)
-
-	}()
 	ok, err := c.dec(sign)
 	if err != nil {
 		return false, err
