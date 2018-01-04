@@ -93,7 +93,8 @@ func (client *AliClient) Send(telephone string, msg map[string]string) (result *
 	params["SignatureMethod"] = "HMAC-SHA1"
 	params["Timestamp"] = time.Now().UTC().Format("2006-01-02T15:04:05Z")
 	params["SignatureVersion"] = "1.0"
-	params["SignatureNonce"] = uuid.NewV4().String()
+	uuid, _ := uuid.NewV4()
+	params["SignatureNonce"] = uuid.String()
 
 	params["Action"] = Action
 	params["SignName"] = client.SignName
