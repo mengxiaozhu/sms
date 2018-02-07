@@ -41,6 +41,9 @@ func (c *SafeClient) Ready() {
 	c.dySmsClient = aliSMS.NewDYSmsClient(c.AccessKeyID, c.AccessKeySecret)
 	//c.r = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
+func (c *SafeClient)GetCommonClient()*aliSMS.DYSmsClient{
+	return c.dySmsClient
+}
 
 // 增加一个签名，限定了改签名的调用次数及重置时间
 func (c *SafeClient) Sign(msg string, limit int, ttl time.Duration) (sign string, err error) {
