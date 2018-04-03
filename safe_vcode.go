@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"log"
 )
 
 const (
@@ -104,6 +105,7 @@ func (c *SafeClient) SendVCode(tel string, length int, ttl time.Duration, sign s
 	if err != nil {
 		return
 	}
+	log.Printf("sendVCode phone: %s vcode:%s \n",tel, v)
 	resp, err := c.dySmsClient.SendSms(&aliSMS.SendSmsArgs{
 		PhoneNumbers:    tel,
 		SignName:        c.SignName,
